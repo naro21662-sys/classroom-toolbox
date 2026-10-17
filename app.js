@@ -81,13 +81,13 @@
     document.dispatchEvent(new CustomEvent('toolbox:view', { detail: name }));
   }
 
-  // 도구는 학생 로그인 후에 연다. 로그인 처리는 auth.js가 담당한다.
-  function openTool(name) {
+  // 일기장만 학생 계정이 필요하다. 로그인 처리는 auth.js가 담당한다.
+  function openDiary() {
     if (!window.classroomAuth) {
       showToast('로그인 기능을 불러오는 중입니다. 잠시 후 다시 눌러 주세요.');
       return;
     }
-    window.classroomAuth.requireLogin(() => showView(name), { needsAccount: name === 'diary' });
+    window.classroomAuth.requireLogin(() => showView('diary'));
   }
   window.classroomShowView = showView;
 
@@ -381,10 +381,10 @@
 
   fillSizeOptions();
 
-  $('openSeatApp').addEventListener('click', () => openTool('seat'));
-  $('openPdfApp').addEventListener('click', () => openTool('pdf'));
-  $('openRedactApp').addEventListener('click', () => openTool('redact'));
-  $('openDiaryApp').addEventListener('click', () => openTool('diary'));
+  $('openSeatApp').addEventListener('click', () => showView('seat'));
+  $('openPdfApp').addEventListener('click', () => showView('pdf'));
+  $('openRedactApp').addEventListener('click', () => showView('redact'));
+  $('openDiaryApp').addEventListener('click', openDiary);
   $('backFromDiary').addEventListener('click', () => showView('hub'));
   $('backToHub').addEventListener('click', () => showView('hub'));
   $('backFromPdf').addEventListener('click', () => showView('hub'));
