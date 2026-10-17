@@ -32,7 +32,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .brand-mark { width: 24px; height: 24px; border-radius: 8px; display: grid; place-items: center; color: white; background: var(--ink); font-size: 12px; }
 .privacy-note { color: var(--slate); font-size: 12px; display: flex; align-items: center; gap: 7px; }
 .account-area { display: flex; align-items: center; gap: 10px; }
-.account-name { color: var(--slate); font-size: 12px; }
 .nav-pill { min-height: 30px; padding: 6px 13px; }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #34a853; }
 
@@ -346,7 +345,7 @@ textarea { resize: vertical; min-height: 120px; border-radius: 18px; padding: 14
 }
 
 @media (max-width: 680px) {
-  .privacy-note, .account-name { display: none !important; }
+  .privacy-note { display: none; }
   .hero { padding: 68px 20px 60px; }
   .hero h1 { font-size: clamp(42px,13vw,58px); }
   .app-stage { padding: 56px 16px 70px; }

@@ -57,11 +57,7 @@ async function signIn(username, password) {
 }
 
 function renderAccount() {
-  const signedIn = Boolean(currentUser);
-  $('accountName').hidden = !signedIn;
-  $('accountName').textContent = signedIn ? `${usernameOf(currentUser)} 님` : '';
-  $('loginButton').hidden = signedIn;
-  $('logoutButton').hidden = !signedIn;
+  $('accountName').textContent = currentUser ? `${usernameOf(currentUser)} 님의 일기장` : '내 계정에만 저장';
 }
 
 $('loginForm').addEventListener('submit', async (event) => {
@@ -88,7 +84,6 @@ $('loginTab').addEventListener('click', () => setMode('login'));
 $('signupTab').addEventListener('click', () => setMode('signup'));
 $('loginClose').addEventListener('click', () => $('loginDialog').close());
 $('loginDialog').addEventListener('close', () => { if (!currentUser) pendingOpen = null; });
-$('loginButton').addEventListener('click', () => openDialog('login'));
 $('logoutButton').addEventListener('click', () => supabase.auth.signOut());
 
 // 콜백 안에서 다른 Supabase 호출을 기다리면 멈출 수 있어, 후속 작업은 setTimeout으로 넘긴다.
@@ -100,7 +95,7 @@ supabase.auth.onAuthStateChange((_event, session) => {
   if (open) pendingOpen = null;
   setTimeout(() => {
     // 일기장을 보던 중 로그아웃하면 허브로 돌아간다.
-    if (wasSignedIn && !currentUser && $('diaryView').classList.contains('is-active')) window.classroomShowView?.('hub');
+    if (wasSignedIn && !currentUser && $('diaryView').classList.contains('is-active')) window.classroomGoHub?.();
     document.dispatchEvent(new CustomEvent('toolbox:auth', { detail: currentUser }));
     if (open) open();
   }, 0);
