@@ -48,6 +48,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .app-card { padding: 0; display: grid; grid-template-rows: 270px auto; text-align: left; cursor: pointer; transition: transform .25s ease; }
 .app-card:hover { transform: translateY(-4px); }
 .app-art { min-height: 270px; padding: 38px; display: grid; place-items: center; background: #edf6ff; }
+a.app-card { color: inherit; text-decoration: none; }
+.student-card-art { background: #eef7f0; }
+.login-sheet { width: 210px; padding: 28px 24px; border-radius: 24px; background: var(--white); display: grid; gap: 10px; transform: rotate(-3deg); }
+.login-sheet b { margin-bottom: 4px; font: 600 18px/1 var(--display); letter-spacing: -.03em; }
+.login-sheet i { height: 30px; border-radius: 9px; background: var(--mist); box-shadow: inset 0 0 0 1px var(--control); }
+.login-sheet em { margin-top: 4px; padding: 9px 0; border-radius: 999px; background: #2f8f4e; color: white; font-style: normal; font-size: 12px; font-weight: 650; text-align: center; }
 .mini-board { width: min(250px, 100%); aspect-ratio: 1.25; padding: 30px; border-radius: 28px; background: var(--white); display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; transform: rotate(-3deg); }
 .mini-board i { border-radius: 10px; background: var(--mist); box-shadow: inset 0 0 0 1px var(--control); }
 .mini-board i:nth-child(2), .mini-board i:nth-child(6) { background: var(--blue); box-shadow: none; }
