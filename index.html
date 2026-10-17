@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="교사를 위한 자리 바꾸기, PDF 글자 수 세기, 생활기록부 개인정보 가리기 도구">
+  <meta name="description" content="교사를 위한 자리 바꾸기, PDF 글자 수 세기, 생활기록부 개인정보 가리기, 일기장 도구">
   <title>교실 도구함</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -16,7 +16,11 @@
         <span class="brand-mark" aria-hidden="true">T</span>
         <span>교실 도구함</span>
       </button>
-      <span class="privacy-note"><span class="status-dot" aria-hidden="true"></span>이 기기에만 저장</span>
+      <div class="account-area">
+        <span class="account-name" id="accountName" hidden></span>
+        <button class="pill pill-outline nav-pill" id="loginButton" type="button">학생 로그인</button>
+        <button class="pill pill-outline nav-pill" id="logoutButton" type="button" hidden>로그아웃</button>
+      </div>
     </div>
   </header>
 
@@ -25,7 +29,7 @@
       <div class="hero">
         <p class="eyebrow">TEACHER'S TOOLBOX</p>
         <h1 id="hubTitle">수업의 작은 일을<br>가볍게 해결하세요.</h1>
-        <p class="hero-copy">필요한 교실 도구를 한곳에서 실행하세요.<br>교실 도구의 자료는 서버로 전송되지 않고 이 브라우저에만 남습니다.</p>
+        <p class="hero-copy">학생 계정으로 로그인하고 필요한 교실 도구를 한곳에서 실행하세요.<br>PDF와 명단은 이 브라우저에서만 처리되고, 일기는 내 계정에만 저장됩니다.</p>
       </div>
 
       <section class="app-stage" aria-labelledby="appsTitle">
@@ -34,7 +38,7 @@
             <p class="section-kicker">MY APPS</p>
             <h2 id="appsTitle">내 프로그램</h2>
           </div>
-          <span class="app-count">5개의 도구</span>
+          <span class="app-count">4개의 도구 · 학생 로그인 필요</span>
         </div>
         <div class="app-grid">
           <button class="app-card" id="openSeatApp" type="button">
@@ -78,7 +82,7 @@
               <span class="text-link">앱 열기 <b aria-hidden="true">→</b></span>
             </span>
           </button>
-          <a class="app-card diary-app-card" href="https://teacher-diary-24eba.web.app/">
+          <button class="app-card diary-app-card" id="openDiaryApp" type="button">
             <span class="app-art diary-card-art" aria-hidden="true">
               <span class="diary-book">
                 <i class="diary-ring"></i>
@@ -88,27 +92,12 @@
               </span>
             </span>
             <span class="app-copy">
-              <span class="new-label">구글 로그인</span>
+              <span class="new-label">내 계정에 저장</span>
               <strong>나의 일기장</strong>
-              <span>기분과 태그를 함께 기록하고 지난 일기를 빠르게 찾아보세요. 지정된 구글 계정으로만 열 수 있어요.</span>
-              <span class="text-link">앱 열기 <b aria-hidden="true">↗</b></span>
+              <span>기분과 태그를 함께 기록하고 지난 일기를 빠르게 찾아보세요. 다른 학생은 내 일기를 볼 수 없어요.</span>
+              <span class="text-link">앱 열기 <b aria-hidden="true">→</b></span>
             </span>
-          </a>
-          <a class="app-card student-app-card" href="https://student-accounts-one.vercel.app/">
-            <span class="app-art student-card-art" aria-hidden="true">
-              <span class="login-sheet">
-                <b>학생 계정</b>
-                <i></i><i></i>
-                <em>로그인</em>
-              </span>
-            </span>
-            <span class="app-copy">
-              <span class="new-label">학생용</span>
-              <strong>학생 계정</strong>
-              <span>학생이 아이디와 비밀번호로 가입하고 로그인해요. 비밀번호를 잊으면 담당 선생님께 문의하도록 안내해요.</span>
-              <span class="text-link">앱 열기 <b aria-hidden="true">↗</b></span>
-            </span>
-          </a>
+          </button>
         </div>
       </section>
     </section>
@@ -379,7 +368,96 @@
         </section>
       </div>
     </section>
+
+    <section class="view app-view" id="diaryView" aria-labelledby="diaryAppTitle">
+      <div class="app-local-nav">
+        <div>
+          <button class="back-button" id="backFromDiary" type="button">← 허브</button>
+          <span class="local-title" id="diaryAppTitle">나의 일기장</span>
+        </div>
+        <span class="local-only-badge"><span class="status-dot" aria-hidden="true"></span>내 계정에만 저장</span>
+      </div>
+
+      <div class="diary-workspace">
+        <aside class="diary-list-card" aria-labelledby="diaryListTitle">
+          <div class="diary-list-head">
+            <div>
+              <p class="eyebrow">ARCHIVE</p>
+              <h2 id="diaryListTitle">지난 기록</h2>
+            </div>
+            <button class="diary-new-button" id="diaryNewButton" type="button" aria-label="새 일기 쓰기">+</button>
+          </div>
+          <div class="diary-summary" aria-label="일기 현황">
+            <div><strong id="diaryTotal">0</strong><span>전체</span></div>
+            <div><strong id="diaryMonth">0</strong><span>이번 달</span></div>
+            <div><strong id="diaryStreak">0</strong><span>연속</span></div>
+          </div>
+          <label class="diary-search">
+            <span class="sr-only">일기 검색</span>
+            <input class="text-input" id="diarySearch" type="search" placeholder="제목, 내용, 태그 검색">
+          </label>
+          <div class="diary-filters" id="diaryMoodFilters" aria-label="기분으로 필터">
+            <button class="diary-chip is-active" data-mood="" type="button">전체</button>
+            <button class="diary-chip" data-mood="행복" type="button">행복</button>
+            <button class="diary-chip" data-mood="평온" type="button">평온</button>
+            <button class="diary-chip" data-mood="슬픔" type="button">슬픔</button>
+            <button class="diary-chip" data-mood="복잡" type="button">복잡</button>
+          </div>
+          <div class="diary-list" id="diaryList"></div>
+          <p class="diary-empty" id="diaryEmpty" hidden>아직 일기가 없어요.<br>오늘의 첫 기록을 남겨보세요.</p>
+        </aside>
+
+        <section class="diary-editor-card" aria-labelledby="diaryEditorTitle">
+          <form id="diaryForm">
+            <div class="diary-editor-top">
+              <div>
+                <p class="eyebrow" id="diaryEditorMode">NEW ENTRY</p>
+                <h2 id="diaryEditorTitle">오늘을 기록해요</h2>
+              </div>
+              <button class="pill pill-outline diary-delete" id="diaryDeleteButton" type="button" hidden>삭제</button>
+            </div>
+            <div class="diary-meta">
+              <label class="diary-field"><span>날짜</span><input class="text-input" id="diaryDate" type="date" required></label>
+              <fieldset class="diary-moods">
+                <legend>오늘의 기분</legend>
+                <label><input type="radio" name="diaryMood" value="행복"><span>행복 ☺</span></label>
+                <label><input type="radio" name="diaryMood" value="평온" checked><span>평온 ○</span></label>
+                <label><input type="radio" name="diaryMood" value="슬픔"><span>슬픔 ◡</span></label>
+                <label><input type="radio" name="diaryMood" value="복잡"><span>복잡 ≋</span></label>
+              </fieldset>
+            </div>
+            <label class="diary-field"><span class="sr-only">일기 제목</span><input class="diary-title-input" id="diaryTitle" maxlength="80" placeholder="오늘은 어떤 하루였나요?" required></label>
+            <label class="diary-field"><span class="sr-only">일기 내용</span><textarea id="diaryContent" maxlength="20000" placeholder="오늘 있었던 일, 마음에 남은 장면, 나에게 해주고 싶은 말을 자유롭게 적어보세요." required></textarea></label>
+            <div class="diary-editor-footer">
+              <input class="text-input" id="diaryTags" placeholder="# 태그를 쉼표로 구분">
+              <span class="diary-count" id="diaryCount">0자</span>
+              <button class="pill pill-blue" id="diarySaveButton" type="submit">기록 저장</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </section>
   </main>
+
+  <dialog class="modal login-modal" id="loginDialog" aria-labelledby="loginTitle">
+    <form id="loginForm" novalidate>
+      <button class="modal-close" id="loginClose" type="button" aria-label="닫기">×</button>
+      <p class="eyebrow">STUDENT ACCOUNT</p>
+      <h2 id="loginTitle">학생 로그인</h2>
+      <p>도구를 사용하려면 학생 계정으로 로그인해 주세요.</p>
+      <div class="auth-tabs" role="tablist" aria-label="로그인 또는 가입">
+        <button class="auth-tab is-active" id="loginTab" role="tab" type="button" aria-selected="true">로그인</button>
+        <button class="auth-tab" id="signupTab" role="tab" type="button" aria-selected="false">가입하기</button>
+      </div>
+      <label class="auth-field"><span>아이디</span><input class="text-input" id="loginUsername" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="20" placeholder="영문 소문자, 숫자, _ (4~20자)"></label>
+      <label class="auth-field"><span>비밀번호</span><input class="text-input" id="loginPassword" type="password" autocomplete="current-password" maxlength="72" placeholder="6자 이상"></label>
+      <label class="auth-field" id="loginConfirmField" hidden><span>비밀번호 확인</span><input class="text-input" id="loginConfirm" type="password" autocomplete="new-password" maxlength="72" placeholder="비밀번호를 한 번 더 입력"></label>
+      <p class="auth-hint" id="signupHint" hidden>아이디에 실명이나 학번을 쓰지 마세요.</p>
+      <p class="auth-error" id="loginError" role="alert"></p>
+      <button class="pill pill-blue auth-submit" id="loginSubmit" type="submit">로그인</button>
+      <p class="auth-help"><strong>비밀번호를 잊어버렸나요?</strong><br>담당 선생님께 문의해 주세요.</p>
+    </form>
+  </dialog>
 
   <dialog class="modal" id="confirmDialog" aria-labelledby="dialogTitle">
     <form method="dialog">
@@ -397,5 +475,7 @@
   <script src="./app.js"></script>
   <script type="module" src="./pdf-counter.js"></script>
   <script type="module" src="./redactor.js"></script>
+  <script type="module" src="./auth.js"></script>
+  <script type="module" src="./diary.js"></script>
 </body>
 </html>

@@ -67,16 +67,29 @@
       hub: '교실 도구함',
       seat: '자리 바꾸기 — 교실 도구함',
       pdf: 'PDF 글자 수 세기 — 교실 도구함',
-      redact: '생활기록부 개인정보 가리기 — 교실 도구함'
+      redact: '생활기록부 개인정보 가리기 — 교실 도구함',
+      diary: '나의 일기장 — 교실 도구함'
     };
     $('hubView').classList.toggle('is-active', name === 'hub');
     $('seatView').classList.toggle('is-active', name === 'seat');
     $('pdfView').classList.toggle('is-active', name === 'pdf');
     $('redactView').classList.toggle('is-active', name === 'redact');
+    $('diaryView').classList.toggle('is-active', name === 'diary');
     document.title = titles[name] || titles.hub;
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (name === 'seat') renderAll();
+    document.dispatchEvent(new CustomEvent('toolbox:view', { detail: name }));
   }
+
+  // 도구는 학생 로그인 후에 연다. 로그인 처리는 auth.js가 담당한다.
+  function openTool(name) {
+    if (!window.classroomAuth) {
+      showToast('로그인 기능을 불러오는 중입니다. 잠시 후 다시 눌러 주세요.');
+      return;
+    }
+    window.classroomAuth.requireLogin(() => showView(name));
+  }
+  window.classroomShowView = showView;
 
   function fillSizeOptions() {
     for (let value = 2; value <= 10; value += 1) {
@@ -368,9 +381,11 @@
 
   fillSizeOptions();
 
-  $('openSeatApp').addEventListener('click', () => showView('seat'));
-  $('openPdfApp').addEventListener('click', () => showView('pdf'));
-  $('openRedactApp').addEventListener('click', () => showView('redact'));
+  $('openSeatApp').addEventListener('click', () => openTool('seat'));
+  $('openPdfApp').addEventListener('click', () => openTool('pdf'));
+  $('openRedactApp').addEventListener('click', () => openTool('redact'));
+  $('openDiaryApp').addEventListener('click', () => openTool('diary'));
+  $('backFromDiary').addEventListener('click', () => showView('hub'));
   $('backToHub').addEventListener('click', () => showView('hub'));
   $('backFromPdf').addEventListener('click', () => showView('hub'));
   $('backFromRedact').addEventListener('click', () => showView('hub'));
