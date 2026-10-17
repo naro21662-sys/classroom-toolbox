@@ -87,7 +87,7 @@
       showToast('로그인 기능을 불러오는 중입니다. 잠시 후 다시 눌러 주세요.');
       return;
     }
-    window.classroomAuth.requireLogin(() => showView(name));
+    window.classroomAuth.requireLogin(() => showView(name), { needsAccount: name === 'diary' });
   }
   window.classroomShowView = showView;
 

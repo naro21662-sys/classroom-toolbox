@@ -5,6 +5,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const $ = (id) => document.getElementById(id);
 const USERNAME_PATTERN = /^[a-z0-9_]{4,20}$/;
+// 선생님 컴퓨터에서 로컬 주소로 열면 학생 로그인 없이 도구를 쓴다. 계정이 필요한 일기장은 예외.
+const IS_LOCAL = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 let currentUser = null;
 let pendingOpen = null;
 let mode = 'login';
@@ -84,6 +86,8 @@ $('loginForm').addEventListener('submit', async (event) => {
   }
 });
 
+if (IS_LOCAL) document.querySelector('.app-count').textContent = '4개의 도구 · 로컬에서는 로그인 없이 사용';
+
 $('loginTab').addEventListener('click', () => setMode('login'));
 $('signupTab').addEventListener('click', () => setMode('signup'));
 $('loginClose').addEventListener('click', () => $('loginDialog').close());
@@ -108,8 +112,8 @@ supabase.auth.onAuthStateChange((_event, session) => {
 
 window.classroomAuth = {
   get user() { return currentUser; },
-  requireLogin(open) {
-    if (currentUser) return open();
+  requireLogin(open, { needsAccount = false } = {}) {
+    if (currentUser || (IS_LOCAL && !needsAccount)) return open();
     pendingOpen = open;
     openDialog('login');
   }
