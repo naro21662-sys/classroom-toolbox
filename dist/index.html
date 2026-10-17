@@ -16,11 +16,6 @@
         <span class="brand-mark" aria-hidden="true">T</span>
         <span>교실 도구함</span>
       </button>
-      <div class="account-area">
-        <span class="account-name" id="accountName" hidden></span>
-        <button class="pill pill-outline nav-pill" id="loginButton" type="button">학생 로그인</button>
-        <button class="pill pill-outline nav-pill" id="logoutButton" type="button" hidden>로그아웃</button>
-      </div>
     </div>
   </header>
 
@@ -375,7 +370,10 @@
           <button class="back-button" id="backFromDiary" type="button">← 허브</button>
           <span class="local-title" id="diaryAppTitle">나의 일기장</span>
         </div>
-        <span class="local-only-badge"><span class="status-dot" aria-hidden="true"></span>내 계정에만 저장</span>
+        <div class="account-area">
+          <span class="local-only-badge"><span class="status-dot" aria-hidden="true"></span><span id="accountName">내 계정에만 저장</span></span>
+          <button class="pill pill-outline nav-pill" id="logoutButton" type="button">로그아웃</button>
+        </div>
       </div>
 
       <div class="diary-workspace">

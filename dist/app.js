@@ -62,7 +62,31 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
+  const TOOL_VIEWS = ['seat', 'pdf', 'redact', 'diary'];
+  let currentView = 'hub';
+
+  // 도구를 열 때 브라우저 기록(#seat 등)을 남겨, 뒤로가기·두 손가락 스와이프로 허브에 돌아오게 한다.
+  function navigate(name) {
+    if (name === currentView) return;
+    if (name === 'hub') return goHub();
+    history.pushState({ view: name, fromHub: currentView === 'hub' }, '', `#${name}`);
+    showView(name);
+  }
+
+  function goHub() {
+    if (currentView === 'hub') return;
+    if (history.state?.fromHub) return history.back();
+    history.replaceState(null, '', location.pathname + location.search);
+    showView('hub');
+  }
+
+  function viewFromHash() {
+    const name = location.hash.slice(1);
+    return TOOL_VIEWS.includes(name) ? name : 'hub';
+  }
+
   function showView(name) {
+    currentView = name;
     const titles = {
       hub: '교실 도구함',
       seat: '자리 바꾸기 — 교실 도구함',
@@ -87,9 +111,20 @@
       showToast('로그인 기능을 불러오는 중입니다. 잠시 후 다시 눌러 주세요.');
       return;
     }
-    window.classroomAuth.requireLogin(() => showView('diary'));
+    window.classroomAuth.requireLogin(() => navigate('diary'));
   }
-  window.classroomShowView = showView;
+  window.classroomGoHub = goHub;
+
+  window.addEventListener('popstate', () => {
+    const name = viewFromHash();
+    // 로그인하지 않은 채 기록으로 일기장에 돌아오면 허브를 보여 준다.
+    if (name === 'diary' && !window.classroomAuth?.user) {
+      history.replaceState(null, '', location.pathname + location.search);
+      showView('hub');
+      return;
+    }
+    showView(name);
+  });
 
   function fillSizeOptions() {
     for (let value = 2; value <= 10; value += 1) {
@@ -381,15 +416,15 @@
 
   fillSizeOptions();
 
-  $('openSeatApp').addEventListener('click', () => showView('seat'));
-  $('openPdfApp').addEventListener('click', () => showView('pdf'));
-  $('openRedactApp').addEventListener('click', () => showView('redact'));
+  $('openSeatApp').addEventListener('click', () => navigate('seat'));
+  $('openPdfApp').addEventListener('click', () => navigate('pdf'));
+  $('openRedactApp').addEventListener('click', () => navigate('redact'));
   $('openDiaryApp').addEventListener('click', openDiary);
-  $('backFromDiary').addEventListener('click', () => showView('hub'));
-  $('backToHub').addEventListener('click', () => showView('hub'));
-  $('backFromPdf').addEventListener('click', () => showView('hub'));
-  $('backFromRedact').addEventListener('click', () => showView('hub'));
-  $('brandButton').addEventListener('click', () => showView('hub'));
+  $('backFromDiary').addEventListener('click', goHub);
+  $('backToHub').addEventListener('click', goHub);
+  $('backFromPdf').addEventListener('click', goHub);
+  $('backFromRedact').addEventListener('click', goHub);
+  $('brandButton').addEventListener('click', goHub);
   $('className').addEventListener('input', (event) => {
     state.className = event.target.value;
     $('classLabel').textContent = state.className.trim() || '우리 반';
@@ -440,4 +475,14 @@
 
   if (!state.seats.length) state.seats = makeSeats(state.rows, state.columns);
   renderAll();
+
+  // #seat 같은 주소로 바로 들어오면 그 도구를 연다. 일기장은 로그인 확인 후 연다.
+  const initialView = viewFromHash();
+  if (initialView === 'diary') {
+    history.replaceState(null, '', location.pathname + location.search);
+    document.addEventListener('toolbox:auth', () => openDiary(), { once: true });
+  } else if (initialView !== 'hub') {
+    history.replaceState({ view: initialView, fromHub: false }, '', `#${initialView}`);
+    showView(initialView);
+  }
 })();
