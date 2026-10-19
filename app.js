@@ -62,7 +62,7 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
-  const TOOL_VIEWS = ['seat', 'pdf', 'redact', 'diary'];
+  const TOOL_VIEWS = ['seat', 'pdf', 'redact'];
   let currentView = 'hub';
 
   // 도구를 열 때 브라우저 기록(#seat 등)을 남겨, 뒤로가기·두 손가락 스와이프로 허브에 돌아오게 한다.
@@ -91,38 +91,22 @@
       hub: '교실 도구함',
       seat: '자리 바꾸기 — 교실 도구함',
       pdf: 'PDF 글자 수 세기 — 교실 도구함',
-      redact: '생활기록부 개인정보 가리기 — 교실 도구함',
-      diary: '나의 일기장 — 교실 도구함'
+      redact: '생활기록부 개인정보 가리기 — 교실 도구함'
     };
     $('hubView').classList.toggle('is-active', name === 'hub');
     $('seatView').classList.toggle('is-active', name === 'seat');
     $('pdfView').classList.toggle('is-active', name === 'pdf');
     $('redactView').classList.toggle('is-active', name === 'redact');
-    $('diaryView').classList.toggle('is-active', name === 'diary');
     document.title = titles[name] || titles.hub;
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (name === 'seat') renderAll();
     document.dispatchEvent(new CustomEvent('toolbox:view', { detail: name }));
   }
 
-  // 일기장만 학생 계정이 필요하다. 로그인 처리는 auth.js가 담당한다.
-  function openDiary() {
-    if (!window.classroomAuth) {
-      showToast('로그인 기능을 불러오는 중입니다. 잠시 후 다시 눌러 주세요.');
-      return;
-    }
-    window.classroomAuth.requireLogin(() => navigate('diary'));
-  }
   window.classroomGoHub = goHub;
 
   window.addEventListener('popstate', () => {
     const name = viewFromHash();
-    // 로그인하지 않은 채 기록으로 일기장에 돌아오면 허브를 보여 준다.
-    if (name === 'diary' && !window.classroomAuth?.user) {
-      history.replaceState(null, '', location.pathname + location.search);
-      showView('hub');
-      return;
-    }
     showView(name);
   });
 
@@ -419,8 +403,6 @@
   $('openSeatApp').addEventListener('click', () => navigate('seat'));
   $('openPdfApp').addEventListener('click', () => navigate('pdf'));
   $('openRedactApp').addEventListener('click', () => navigate('redact'));
-  $('openDiaryApp').addEventListener('click', openDiary);
-  $('backFromDiary').addEventListener('click', goHub);
   $('backToHub').addEventListener('click', goHub);
   $('backFromPdf').addEventListener('click', goHub);
   $('backFromRedact').addEventListener('click', goHub);
@@ -476,12 +458,9 @@
   if (!state.seats.length) state.seats = makeSeats(state.rows, state.columns);
   renderAll();
 
-  // #seat 같은 주소로 바로 들어오면 그 도구를 연다. 일기장은 로그인 확인 후 연다.
+  // #seat 같은 주소로 바로 들어오면 그 도구를 연다.
   const initialView = viewFromHash();
-  if (initialView === 'diary') {
-    history.replaceState(null, '', location.pathname + location.search);
-    document.addEventListener('toolbox:auth', () => openDiary(), { once: true });
-  } else if (initialView !== 'hub') {
+  if (initialView !== 'hub') {
     history.replaceState({ view: initialView, fromHub: false }, '', `#${initialView}`);
     showView(initialView);
   }
